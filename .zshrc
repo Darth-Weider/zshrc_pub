@@ -144,6 +144,7 @@ alias rm="rm -i"
 alias firefox=/Applications/Firefox.app/Contents/MacOS/firefox
 alias lsh="lsd -ld .??*" # only show dot files
 alias ls="lsd"
+alias cat="ccat"
 alias restartdock="killall -KILL Dock"
 alias memory_status="top -l 1 -s 0 | grep PhysMem"
 alias drop_rc="env -i zsh -f"

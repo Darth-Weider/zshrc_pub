@@ -18,6 +18,7 @@ my zshrc config, free to use and modify
 - [oh-my-posh](https://github.com/JanDeDobbeleer/oh-my-posh)
 - [oh-my-zsh](https://ohmyz.sh/)
 - [LSD](https://github.com/Peltoche/lsd)
+- [ccat](https://github.com/owenthereal/ccat)
 - [fzf](https://github.com/junegunn/fzf)
 - [Nerd Fonts](https://www.nerdfonts.com/)
 
