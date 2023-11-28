@@ -3,7 +3,7 @@ my zshrc config, free to use and modify
 
 ### For OS X only
 
-### Tab completion
+### Tab completion (Requires fzf)
 
 * git
 * brew
@@ -21,6 +21,7 @@ my zshrc config, free to use and modify
 - [fzf](https://github.com/junegunn/fzf)
 
 ### Plugins to make fzf tab completion work
+For each of the following plugins, clone the repo into `~/.oh-my-zsh/custom/plugins/`
 
 - [fzf-tab](https://github.com/Aloxaf/fzf-tab)
 - [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions)
