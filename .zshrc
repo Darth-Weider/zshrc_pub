@@ -29,7 +29,7 @@ export AWS_DEFAULT_REGION=us-east-1
 export AWS_SDK_LOAD_CONFIG=1 #Needed for terraform to work with AWS profiles
 export AWS_SHARED_CREDENTIALS_FILE=$HOME/.aws/credentials
 export GRANTED_QUIET=true ##Reference: https://docs.commonfate.io/granted/configuration
-export OP_SERVICE_ACCOUNT_TOKEN=$HOME/.op/service_account_token
+export OP_SERVICE_ACCOUNT_TOKEN="$(cat $HOME/.config/op/service_account_token)"
 
 # Use oh-my-posh instead of oh-my-zsh prompt
 #ZSH_THEME=
@@ -343,6 +343,24 @@ for dir in */; do
     echo "Skipping $dir - not a Git repository"
   fi
 done
+
+
+    extract () {
+#   extract:  Extract tar files (tar.gz, tar.bz2, .tar, etc)
+#   Reference: https://gist.github.com/benwilcock/ade030ee60e695e408ec50675aa50fe6#file-zshrc-L157-L177
+        if [ -f $1 ] ; then
+          case $1 in
+            *.tar.bz2)   tar xjf $1     ;;
+            *.tar.gz)    tar xzf $1     ;;
+            *.tar)       tar xf $1      ;;
+            *.tbz2)      tar xjf $1     ;;
+            *.tgz)       tar xzf $1     ;;
+            *)     echo "'$1' cannot be extracted via extract()" ;;
+             esac
+         else
+             echo "'$1' is not a valid file"
+         fi
+    }
 
 }
 
