@@ -371,4 +371,5 @@ eval "$(op completion zsh)"; compdef _op op
 source <(kubectl completion zsh)
 #Reference: https://docs.commonfate.io/granted/configuration
 granted completion -s zsh > /dev/null 2>&1
-
+#helm auto complete
+source <(helm completion zsh)
