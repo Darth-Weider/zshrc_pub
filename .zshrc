@@ -5,14 +5,11 @@ export PATH=/usr/local/bin/aws:$PATH
 export PATH="/usr/local/opt/icu4c/bin:$PATH"
 export PATH="/usr/local/opt/icu4c/sbin:$PATH"
 export PATH="/usr/local/sbin:$PATH"
-
 export LDFLAGS="-L/usr/local/opt/ilmbase/lib"
 export CPPFLAGS="-I/usr/local/opt/ilmbase/include"
 export PKG_CONFIG_PATH="/usr/local/opt/ilmbase/lib/pkgconfig"
-
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
-
 # LESS man page colors
 export LESS_TERMCAP_mb=$'\E[01;31m'
 export LESS_TERMCAP_md=$'\E[01;31m'
@@ -24,7 +21,6 @@ export LESS_TERMCAP_us=$'\E[01;32m'
 export ITERM2_SQUELCH_MARK=1
 export CLICOLOR=1
 export AWS_PAGER="" ##"less" or "" https://docs.aws.amazon.com/cli/latest/userguide/cli-usage-pagination.html
-
 export AWS_DEFAULT_REGION=us-east-1
 export AWS_SDK_LOAD_CONFIG=1 #Needed for terraform to work with AWS profiles
 export AWS_SHARED_CREDENTIALS_FILE=$HOME/.aws/credentials
@@ -246,12 +242,34 @@ function filestolower(){
 #Load AWS profile from .aws/credentials file
 #Require AWS CLI
 
-list_aws_profiles() {
+function list_aws_profiles() {
    cat ~/.aws/config | grep '\[profile' | sed -n 's/\[profile \(.*\).*\]/\1/p' | sort
-   #cat ~/.aws/credentials | grep '\[' | grep pbs | grep -v '#' | tr -d '[' | tr -d ']'
-  }
+}
 
-current_aws_profile() {
+function current_aws_profile() {
+  aws_profile=$(aws configure list | egrep profile | awk '{print "("$2")"}')
+  if [[ "${aws_profile}" == "(<not)" ]]
+  then
+    echo > /dev/null
+  else
+    Account_ID=$(aws sts get-caller-identity | jq -r ".Account")
+    echo "${aws_profile} - ${Account_ID}"
+  fi
+}
+
+function set_aws_profile() {
+  local aws_profile=$1
+  set -x
+  export AWS_PROFILE=${aws_profile}
+  set +x
+}
+
+function drop_aws_profile() {
+  # require aws plugin
+  acp
+}
+
+function current_aws_profile() {
       aws_profile=$(aws configure list | egrep profile | awk '{print "("$2")"}')
       if [[ "${aws_profile}" == "(<not)" ]]
       then
@@ -263,7 +281,7 @@ current_aws_profile() {
       fi
 }
 
-set_aws_profile() {
+function set_aws_profile() {
     local aws_profile=$1
     set -x
     export AWS_PROFILE=${aws_profile}
@@ -271,12 +289,12 @@ set_aws_profile() {
 
   }
 
-drop_aws_profile(){
+function drop_aws_profile(){
 #require aws plugin
    acp
 }
 #EC2 Name Tag, InstanceID, Private IP address
-aws_ec2_info() {
+function aws_ec2_info() {
 
 aws ec2 describe-instances \
     --filter Name=instance-state-name,Values=running \
@@ -285,7 +303,7 @@ aws ec2 describe-instances \
 
 }
 #To sync my aws cred to github in case I need to use it on my Windows laptop
-update_aws_cred(){
+function update_aws_cred(){
 
   cd ~/.aws
   if [ -n "$(git status --porcelain)" ]; then
@@ -306,13 +324,13 @@ cd - > /dev/null
 
 # Require AWS login auditor permission to run
 
-aws_login_status(){
+function aws_login_status(){
 
 aws iam list-users | jq ".Users[] | [.UserName, .PasswordLastUsed] |@csv" | tr -d '"'
 
 }
 
-aws_access_key_status(){
+function aws_access_key_status(){
 #Check access key activity
 for user in $(aws iam list-users --output text | awk '{print $NF}'); do
     aws iam list-access-keys --user $user --output text
@@ -321,7 +339,7 @@ done
 
 }
 
-aws_rds_info() {
+function aws_rds_info() {
 
 aws rds describe-db-instances \
     --query 'DBInstances[*].{ID: DBInstanceIdentifier,Name: DBName,Type: DBInstanceClass, Engine: Engine, Engine_version: EngineVersion, Status: DBInstanceStatus, Endpoint: Endpoint.Address, PubliclyAccessible: PubliclyAccessible} ' \
@@ -330,7 +348,7 @@ aws rds describe-db-instances \
 }
 
 
-update_repos() {
+function update_repos() {
 #repos update, for all the git repos in a parent folder
 for dir in */; do
   if [ -d "$dir/.git" ]; then
@@ -345,7 +363,7 @@ for dir in */; do
 done
 
 
-    extract () {
+function extract () {
 #   extract:  Extract tar files (tar.gz, tar.bz2, .tar, etc)
 #   Reference: https://gist.github.com/benwilcock/ade030ee60e695e408ec50675aa50fe6#file-zshrc-L157-L177
         if [ -f $1 ] ; then
