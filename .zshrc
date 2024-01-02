@@ -105,11 +105,12 @@ source /usr/local/share/zsh/site-functions/aws_zsh_completer.sh #For ZSH only
 export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
+if [[ -n $SSH_CONNECTION ]]; then
+   export EDITOR='nano'
+ else
+   export EDITOR='vim'
+fi
+export K9S_EDITOR='vim'
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
