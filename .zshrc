@@ -392,3 +392,5 @@ source <(kubectl completion zsh)
 granted completion -s zsh > /dev/null 2>&1
 #helm auto complete
 source <(helm completion zsh)
+#gh copilot auto complete
+eval "$(gh copilot alias -- zsh)"
