@@ -194,50 +194,9 @@ function randompw() {
 	echo
 }
 
-function sshKeyGen(){
-
-echo "What's the name of the Key (no spaced please) ? ";
-read name;
-
-echo "What's the email associated with it? ";
-read email;
-
-`ssh-keygen -t rsa -f ~/.ssh/id_rsa_$name -C "$email"`;
-
-ssh-add ~/.ssh/id_rsa_$name
-
-pbcopy < ~/.ssh/id_rsa_$name.pub;
-
-echo "SSH Key copied in your clipboard";
-
-}
-
 
 function sha256sum() { openssl sha256 "$@" | awk '{print $2}'; } #https://unix.stackexchange.com/questions/426837/no-sha256sum-in-macos
 
-function filestolower(){
-# rename all the files which contain uppercase letters to lowercase in the current folder
-  read -p "This will rename all the files and directories to lowercase in the current folder, continue? [y/n]: " letsdothis
-  if [ "$letsdothis" = "y" ] || [ "$letsdothis" = "Y" ]; then
-    for x in `ls`
-      do
-      skip=false
-      if [ -d $x ]; then
-	read -p "'$x' is a folder, rename it? [y/n]: " renamedir
-	if [ "$renamedir" = "n" ] || [ "$renameDir" = "N" ]; then
-	  skip=true
-	fi
-      fi
-      if [ "$skip" == "false" ]; then
-        lc=`echo $x  | tr '[A-Z]' '[a-z]'`
-        if [ $lc != $x ]; then
-          echo "renaming $x -> $lc"
-          mv $x $lc
-        fi
-      fi
-    done
-  fi
-}
 
 #AWS Environment var reference http://saurabh-hirani.github.io/writing/2018/04/05/zsh-and-aws-profiles
 #Load AWS profile from .aws/credentials file
