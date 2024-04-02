@@ -353,3 +353,5 @@ granted completion -s zsh > /dev/null 2>&1
 source <(helm completion zsh)
 #gh copilot auto complete
 eval "$(gh copilot alias -- zsh)"
+#packer auto complete
+complete -o nospace -C /usr/local/bin/packer packer
