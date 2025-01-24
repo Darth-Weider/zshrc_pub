@@ -355,3 +355,9 @@ source <(helm completion zsh)
 eval "$(gh copilot alias -- zsh)"
 #packer auto complete
 complete -o nospace -C /usr/local/bin/packer packer
+#tenv auto complete
+source ~/.tenv.completion.zsh
+# Setup pyenv for python version management
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - zsh)"

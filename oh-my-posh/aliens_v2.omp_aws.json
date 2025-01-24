@@ -97,11 +97,11 @@
           "background": "#9db8e9"
         },
         {
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#FFDE57",
+          "background": "#4584B6",
           "type": "python",
-          "style": "diamond",
-          "foreground": "#ffffff",
-          "background": "#FF6471",
-          "trailing_diamond": "\ue0b4"
+          "style": "powerline"
         }
       ]
     }
