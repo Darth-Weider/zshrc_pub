@@ -26,6 +26,7 @@ export AWS_SDK_LOAD_CONFIG=1 #Needed for terraform to work with AWS profiles
 export AWS_SHARED_CREDENTIALS_FILE=$HOME/.aws/credentials
 export GRANTED_QUIET=true ##Reference: https://docs.commonfate.io/granted/configuration
 export OP_SERVICE_ACCOUNT_TOKEN="$(cat $HOME/.config/op/service_account_token)"
+export ANSIBLE_STDOUT_CALLBACK=yaml #or debug
 
 # Use oh-my-posh instead of oh-my-zsh prompt
 #ZSH_THEME=
