@@ -1,3 +1,4 @@
+# shellcheck shell=bash
 # ─────────────────────────────────────────────────────────────
 # DETECT OS (macOS vs Ubuntu/Linux)
 # ─────────────────────────────────────────────────────────────
@@ -68,6 +69,7 @@ command -v oh-my-posh &>/dev/null && \
 # ─────────────────────────────────────────────────────────────
 # OH-MY-ZSH SETTINGS
 # ─────────────────────────────────────────────────────────────
+# shellcheck disable=SC2034  # Used by oh-my-zsh
 CASE_SENSITIVE="true"
 ENABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
@@ -76,6 +78,7 @@ export UPDATE_ZSH_DAYS=30
 # ─────────────────────────────────────────────────────────────
 # PLUGINS
 # ─────────────────────────────────────────────────────────────
+# shellcheck disable=SC2034  # Used by oh-my-zsh
 plugins=(
   ansible
   aws
@@ -89,11 +92,11 @@ plugins=(
   zsh-syntax-highlighting
 )
 
-source $ZSH/oh-my-zsh.sh
+source "$ZSH/oh-my-zsh.sh"
 
 # fzf-tab (must be sourced after oh-my-zsh/compinit)
-[[ -f ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab/fzf-tab.zsh ]] && \
-  source ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab/fzf-tab.zsh
+[[ -f "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab/fzf-tab.zsh" ]] && \
+  source "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab/fzf-tab.zsh"
 
 # AWS zsh completion (cross-platform safe if installed)
 if [[ -f /usr/local/share/zsh/site-functions/aws_zsh_completer.sh ]]; then
@@ -124,7 +127,7 @@ alias public_ip="dig +short myip.opendns.com @resolver1.opendns.com"
 if [[ "$OS" == "Darwin" ]]; then
     alias local_ip="ipconfig getifaddr en0"
 else
-    alias local_ip="hostname -I | awk '{print \$1}'"
+    local_ip() { hostname -I | awk '{print $1}'; }
 fi
 alias rm="rm -i"
 command -v lsd &>/dev/null && alias ls="lsd" && alias lsh="lsd -ld .??*"
@@ -160,6 +163,7 @@ fif() { grep -nr "$1" . --color; }
 
 randompw() {
 	local MAXSIZE=${1:-27}
+	# shellcheck disable=SC1001  # Escapes are intentional for zsh array
 	local chars=( {a..z} {A..Z} {0..9} \! \@ \$ \% \^ \& \* )
 	for ((i=0;i<MAXSIZE;i++)); do printf "%s" "${chars[$RANDOM % ${#chars[@]}]}"; done
 	echo
@@ -173,7 +177,8 @@ list_aws_profiles() {
 }
 
 current_aws_profile() {
-  local p=$(aws configure list | awk '/profile/{print $2}')
+  local p
+  p=$(aws configure list | awk '/profile/{print $2}')
   [[ "$p" == "<not" ]] && return
   echo "($p)"
 }

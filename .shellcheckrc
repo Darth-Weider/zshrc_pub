@@ -1,0 +1,9 @@
+# This is a zsh config; shellcheck doesn't fully support zsh.
+# Suppress false positives for zsh-specific syntax.
+
+# SC1091: Can't follow sourced files (external plugins)
+disable=SC1091
+# SC1090: Can't follow non-constant source paths
+disable=SC1090
+# SC2016: Expressions in single quotes are intentional (zsh zstyle, AWS JMESPath)
+disable=SC2016
