@@ -71,7 +71,9 @@ command -v oh-my-posh &>/dev/null && \
 # ─────────────────────────────────────────────────────────────
 # shellcheck disable=SC2034  # Used by oh-my-zsh
 CASE_SENSITIVE="true"
+# shellcheck disable=SC2034
 ENABLE_CORRECTION="true"
+# shellcheck disable=SC2034
 COMPLETION_WAITING_DOTS="true"
 export UPDATE_ZSH_DAYS=30
 
