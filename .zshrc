@@ -62,7 +62,8 @@ export ANSIBLE_STDOUT_CALLBACK=yaml
 # PROMPT (PUBLIC-SAFE)
 # ─────────────────────────────────────────────────────────────
 # Replace with your own oh-my-posh theme file
-eval "$(oh-my-posh --init --shell zsh --config ~/.config/oh-my-posh/theme.json)"
+command -v oh-my-posh &>/dev/null && \
+  eval "$(oh-my-posh --init --shell zsh --config ~/.config/oh-my-posh/theme.json)"
 
 # ─────────────────────────────────────────────────────────────
 # OH-MY-ZSH SETTINGS
@@ -88,12 +89,11 @@ plugins=(
   zsh-syntax-highlighting
 )
 
-autoload -Uz compinit && compinit
-
-# fzf-tab (cross-platform safe)
-source ~/.oh-my-zsh/custom/plugins/fzf-tab/fzf-tab.zsh
-
 source $ZSH/oh-my-zsh.sh
+
+# fzf-tab (must be sourced after oh-my-zsh/compinit)
+[[ -f ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab/fzf-tab.zsh ]] && \
+  source ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-tab/fzf-tab.zsh
 
 # AWS zsh completion (cross-platform safe if installed)
 if [[ -f /usr/local/share/zsh/site-functions/aws_zsh_completer.sh ]]; then
@@ -121,11 +121,14 @@ alias ..="cd ../"
 alias ...="cd ../../"
 alias ....="cd ../../../"
 alias public_ip="dig +short myip.opendns.com @resolver1.opendns.com"
-alias local_ip="hostname -I | awk '{print $1}'"
+if [[ "$OS" == "Darwin" ]]; then
+    alias local_ip="ipconfig getifaddr en0"
+else
+    alias local_ip="hostname -I | awk '{print \$1}'"
+fi
 alias rm="rm -i"
-alias ls="lsd"
-alias lsh="lsd -ld .??*"
-alias cat="ccat"
+command -v lsd &>/dev/null && alias ls="lsd" && alias lsh="lsd -ld .??*"
+command -v ccat &>/dev/null && alias cat="ccat"
 alias memory_status="top -l 1 -s 0 | grep PhysMem 2>/dev/null || free -h"
 alias drop_rc="env -i zsh -f"
 alias star_wars="{ sleep 1 ; echo starwars ; sleep 99999 ;} | nc -c telehack.com 23"
@@ -153,10 +156,7 @@ reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) 2>/dev/null)"}%%[#
 # ─────────────────────────────────────────────────────────────
 ff() { find . -iname "$1" 2>/dev/null; }
 
-fif() {
-	[[ $# -eq 1 ]] && grep -nr "$1" . --color || \
-	s "$(grep -nr "$1" . | sed -n "$2"p | cut -d: -f-2)"
-}
+fif() { grep -nr "$1" . --color; }
 
 randompw() {
 	local MAXSIZE=${1:-27}
@@ -165,7 +165,8 @@ randompw() {
 	echo
 }
 
-sha256sum() { openssl sha256 "$@" | awk '{print $2}'; }
+# macOS lacks sha256sum; provide a shim via openssl
+[[ "$OS" == "Darwin" ]] && sha256sum() { openssl sha256 "$@" | awk '{print $2}'; }
 
 list_aws_profiles() {
    grep '\[profile' ~/.aws/config | sed -n 's/\[profile \(.*\).*\]/\1/p'
@@ -197,8 +198,17 @@ extract() {
     [[ -f "$1" ]] || { echo "'$1' is not a valid file"; return; }
     case "$1" in
       *.tar.bz2|*.tbz2) tar xjf "$1" ;;
-      *.tar.gz|*.tgz)  tar xzf "$1" ;;
-      *.tar)           tar xf "$1" ;;
+      *.tar.gz|*.tgz)   tar xzf "$1" ;;
+      *.tar.xz|*.txz)   tar xJf "$1" ;;
+      *.tar.zst)         tar --zstd -xf "$1" ;;
+      *.tar)             tar xf "$1" ;;
+      *.zip)             unzip "$1" ;;
+      *.gz)              gunzip "$1" ;;
+      *.bz2)             bunzip2 "$1" ;;
+      *.xz)              unxz "$1" ;;
+      *.zst)             unzstd "$1" ;;
+      *.7z)              7z x "$1" ;;
+      *.rar)             unrar x "$1" ;;
       *) echo "'$1' cannot be extracted";;
     esac
 }
@@ -216,12 +226,12 @@ done
 # ─────────────────────────────────────────────────────────────
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 eval "$(op completion zsh)" 2>/dev/null
-source <(kubectl completion zsh)
-source <(helm completion zsh)
+command -v kubectl &>/dev/null && source <(kubectl completion zsh)
+command -v helm &>/dev/null && source <(helm completion zsh)
 granted completion -s zsh >/dev/null 2>&1
-eval "$(gh copilot alias -- zsh)"
+command -v gh &>/dev/null && eval "$(gh copilot alias -- zsh)" 2>/dev/null
 
 # pyenv (cross-platform safe)
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init - zsh)"
+command -v pyenv &>/dev/null && eval "$(pyenv init - zsh)"
